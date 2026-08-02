@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install GNOME extension tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends gnome-shell
+
+      - name: Package extension
+        run: |
+          gnome-extensions pack \
+            --force \
+            --extra-source=glab-client.js \
+            --extra-source=notifications.js \
+            --extra-source=project-monitor.js \
+            --extra-source=state-store.js \
+            --extra-source=gitlab-symbolic.svg \
+            --schema=schemas/org.gnome.shell.extensions.gitlab-monitor.gschema.xml \
+            .
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            gitlab-monitor@fernandobouchet.shell-extension.zip \
+            --verify-tag \
+            --generate-notes \
+            --title "$GITHUB_REF_NAME"

@@ -68,6 +68,16 @@ Open the preferences:
 gnome-extensions prefs gitlab-monitor@fernandobouchet
 ```
 
+## Releases
+
+GitHub Actions packages the extension and attaches the ZIP to a release when a
+tag beginning with `v` is pushed:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
 ## Manual validation
 
 1. Open the preferences.
