@@ -1,4 +1,3 @@
-import Clutter from 'gi://Clutter';
 import Gio from 'gi://Gio';
 import GObject from 'gi://GObject';
 import St from 'gi://St';
@@ -17,6 +16,7 @@ const GitLabIndicator = GObject.registerClass(
 class GitLabIndicator extends PanelMenu.Button {
     constructor(extension, onRefresh) {
         super(0.5, 'GitLab Monitor');
+        this.add_style_class_name('gitlab-monitor-indicator');
 
         this._extension = extension;
         this._icon = new St.Icon({
@@ -30,18 +30,20 @@ class GitLabIndicator extends PanelMenu.Button {
         const header = new PopupMenu.PopupBaseMenuItem({
             reactive: false,
         });
-        const title = new St.Label({
-            text: 'GitLab Monitor',
+        const headerText = new St.BoxLayout({
             x_expand: true,
-            style_class: 'gitlab-monitor-title',
+            vertical: true,
         });
-        header.add_child(title);
+        headerText.add_child(new St.Label({
+            text: 'GitLab Monitor',
+            style_class: 'gitlab-monitor-title',
+        }));
         this._statusLabel = new St.Label({
             text: 'Sin configurar',
             style_class: 'gitlab-monitor-secondary',
-            y_align: Clutter.ActorAlign.CENTER,
         });
-        header.add_child(this._statusLabel);
+        headerText.add_child(this._statusLabel);
+        header.add_child(headerText);
         this._refreshButton = new St.Button({
             style_class: 'button gitlab-monitor-icon-button',
             accessible_name: 'Actualizar',
@@ -91,24 +93,13 @@ class GitLabIndicator extends PanelMenu.Button {
     setProjects(snapshots) {
         this._projectsSection.removeAll();
 
-        for (const [index, snapshot] of snapshots.entries()) {
+        for (const snapshot of snapshots)
             this._addProject(snapshot);
-            if (index < snapshots.length - 1) {
-                this._projectsSection.addMenuItem(
-                    new PopupMenu.PopupSeparatorMenuItem()
-                );
-            }
-        }
     }
 
     _addProject(snapshot) {
-        const {project, latestCommit, mergeRequests, latestPipeline, error} =
-            snapshot;
-        this._projectsSection.addMenuItem(createLinkItem(
-            project.name,
-            project.webUrl,
-            'gitlab-monitor-project'
-        ));
+        const {project, latestCommit, error} = snapshot;
+        this._projectsSection.addMenuItem(createProjectItem(project));
 
         if (error) {
             const detail = error.trim().toLowerCase();
@@ -116,40 +107,20 @@ class GitLabIndicator extends PanelMenu.Button {
                 ? 'No se pudo actualizar'
                 : `No se pudo actualizar: ${error}`;
             this._projectsSection.addMenuItem(createInfoItem(`  ${message}`));
+        } else if (latestCommit) {
+            const commitTitle = truncate(latestCommit.title, 28) || 'Sin título';
+            const committedAt = formatDateTime(
+                new Date(latestCommit.committedAt)
+            );
+            this._projectsSection.addMenuItem(createLinkItem(
+                `  ${commitTitle} · ${latestCommit.shortId} · ${committedAt}`,
+                latestCommit.webUrl,
+                'gitlab-monitor-secondary'
+            ));
         } else {
             this._projectsSection.addMenuItem(createInfoItem(
-                `  Rama principal: ${project.defaultBranch ?? 'Sin definir'}`
+                '  Sin commits en la rama principal'
             ));
-
-            if (latestCommit) {
-                this._projectsSection.addMenuItem(createLinkItem(
-                    `  Último commit: ${latestCommit.shortId} · ${truncate(latestCommit.title, 32)}`,
-                    latestCommit.webUrl,
-                    'gitlab-monitor-secondary'
-                ));
-                this._projectsSection.addMenuItem(createInfoItem(
-                    `  Fecha: ${formatDateTime(new Date(latestCommit.committedAt))}`
-                ));
-            } else {
-                this._projectsSection.addMenuItem(createInfoItem(
-                    '  Sin commits en la rama principal'
-                ));
-            }
-
-            if (latestPipeline) {
-                const number = latestPipeline.iid ?? latestPipeline.id;
-                this._projectsSection.addMenuItem(createLinkItem(
-                    `  Pipeline #${number} · ${latestPipeline.ref ?? ''} · ${latestPipeline.status}`,
-                    latestPipeline.webUrl
-                ));
-            }
-
-            for (const mergeRequest of mergeRequests.slice(0, 3)) {
-                this._projectsSection.addMenuItem(createLinkItem(
-                    `  MR !${mergeRequest.iid} · ${truncate(mergeRequest.title, 42)}`,
-                    mergeRequest.webUrl
-                ));
-            }
         }
     }
 });
@@ -221,6 +192,24 @@ function createLinkItem(label, uri, styleClass = null) {
         item.add_style_class_name(styleClass);
     if (uri)
         item.connect('activate', () => openUri(uri));
+    return item;
+}
+
+function createProjectItem(project) {
+    const item = new PopupMenu.PopupBaseMenuItem({
+        reactive: Boolean(project.webUrl),
+    });
+    item.add_style_class_name('gitlab-monitor-project');
+    item.add_child(new St.Label({
+        text: project.name,
+        style_class: 'gitlab-monitor-project-name',
+    }));
+    item.add_child(new St.Label({
+        text: ` (rama: ${project.defaultBranch ?? 'sin definir'})`,
+        style_class: 'gitlab-monitor-branch',
+    }));
+    if (project.webUrl)
+        item.connect('activate', () => openUri(project.webUrl));
     return item;
 }
 
