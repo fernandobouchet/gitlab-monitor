@@ -2,7 +2,10 @@ import Gio from 'gi://Gio';
 import GObject from 'gi://GObject';
 import St from 'gi://St';
 
-import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
+import {
+    Extension,
+    gettext as _,
+} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
@@ -15,7 +18,7 @@ import {StateStore} from './state-store.js';
 const GitLabIndicator = GObject.registerClass(
 class GitLabIndicator extends PanelMenu.Button {
     constructor(extension, onRefresh) {
-        super(0.5, 'GitLab Monitor');
+        super(0.5, _('GitLab Monitor'));
         this.add_style_class_name('gitlab-monitor-indicator');
 
         this._extension = extension;
@@ -35,25 +38,25 @@ class GitLabIndicator extends PanelMenu.Button {
             vertical: true,
         });
         headerText.add_child(new St.Label({
-            text: 'GitLab Monitor',
+            text: _('GitLab Monitor'),
             style_class: 'gitlab-monitor-title',
         }));
         this._statusLabel = new St.Label({
-            text: 'Sin configurar',
+            text: _('Not configured'),
             style_class: 'gitlab-monitor-secondary',
         });
         headerText.add_child(this._statusLabel);
         header.add_child(headerText);
         this._refreshButton = new St.Button({
             style_class: 'button gitlab-monitor-icon-button',
-            accessible_name: 'Actualizar',
+            accessible_name: _('Refresh'),
             child: new St.Icon({icon_name: 'view-refresh-symbolic'}),
         });
         this._refreshButton.connect('clicked', onRefresh);
         header.add_child(this._refreshButton);
         const preferencesButton = new St.Button({
             style_class: 'button gitlab-monitor-icon-button',
-            accessible_name: 'Preferencias',
+            accessible_name: _('Preferences'),
             child: new St.Icon({icon_name: 'preferences-system-symbolic'}),
         });
         preferencesButton.connect('clicked', () => extension.openPreferences());
@@ -68,8 +71,8 @@ class GitLabIndicator extends PanelMenu.Button {
     setStatus(status) {
         const refreshing = status === 'refreshing';
         this._refreshButton.accessible_name = refreshing
-            ? 'Actualizando'
-            : 'Actualizar';
+            ? _('Refreshing')
+            : _('Refresh');
         this._refreshButton.reactive = !refreshing;
         this._refreshButton.can_focus = !refreshing;
 
@@ -77,12 +80,12 @@ class GitLabIndicator extends PanelMenu.Button {
             return;
 
         const labels = {
-            'missing-cli': 'GitLab CLI no está instalado',
-            unauthenticated: 'Sesión de GitLab no disponible',
-            'not-configured': 'Sin proyectos configurados',
-            ready: 'Actualizado',
-            error: 'No se pudo consultar GitLab',
-            'partial-error': 'Actualización parcial',
+            'missing-cli': _('GitLab CLI is not installed'),
+            unauthenticated: _('GitLab session is not available'),
+            'not-configured': _('No projects configured'),
+            ready: _('Updated'),
+            error: _('Could not query GitLab'),
+            'partial-error': _('Partial update'),
         };
         const label = labels[status] ?? status;
         this._statusLabel.text = status === 'ready'
@@ -104,11 +107,11 @@ class GitLabIndicator extends PanelMenu.Button {
         if (error) {
             const detail = error.trim().toLowerCase();
             const message = detail === 'error'
-                ? 'No se pudo actualizar'
-                : `No se pudo actualizar: ${error}`;
+                ? _('Could not update')
+                : _('Could not update: %s').replace('%s', error);
             this._projectsSection.addMenuItem(createInfoItem(`  ${message}`));
         } else if (latestCommit) {
-            const commitTitle = truncate(latestCommit.title, 28) || 'Sin título';
+            const commitTitle = truncate(latestCommit.title, 28) || _('Untitled');
             const committedAt = formatDateTime(
                 new Date(latestCommit.committedAt)
             );
@@ -119,7 +122,7 @@ class GitLabIndicator extends PanelMenu.Button {
             ));
         } else {
             this._projectsSection.addMenuItem(createInfoItem(
-                '  Sin commits en la rama principal'
+                `  ${_('No commits on the default branch')}`
             ));
         }
     }
@@ -128,7 +131,7 @@ class GitLabIndicator extends PanelMenu.Button {
 export default class GitLabMonitorExtension extends Extension {
     enable() {
         this._settings = this.getSettings();
-        this._client = new GlabClient();
+        this._client = new GlabClient({translate: _});
         this._stateStore = new StateStore();
         this._notifications = new NotificationManager();
         this._snapshots = [];
@@ -205,7 +208,8 @@ function createProjectItem(project) {
         style_class: 'gitlab-monitor-project-name',
     }));
     item.add_child(new St.Label({
-        text: ` (rama: ${project.defaultBranch ?? 'sin definir'})`,
+        text: ` ${_('(branch: %s)').replace(
+            '%s', project.defaultBranch ?? _('not defined'))}`,
         style_class: 'gitlab-monitor-branch',
     }));
     if (project.webUrl)
@@ -226,7 +230,10 @@ function openUri(uri) {
     try {
         Gio.AppInfo.launch_default_for_uri(uri, null);
     } catch (error) {
-        console.error(`GitLab Monitor: no se pudo abrir la URL: ${error.message}`);
+        console.error(
+            _('GitLab Monitor: could not open the URL: %s')
+                .replace('%s', error.message)
+        );
     }
 }
 

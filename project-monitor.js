@@ -1,5 +1,6 @@
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
+import {gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
 
 const MAX_CONCURRENT_PROJECTS = 2;
 const MAX_PROJECTS = 10;
@@ -111,7 +112,7 @@ export class ProjectMonitor {
                         : {
                             project: {
                                 id: projectId,
-                                name: `Proyecto ${projectId}`,
+                                name: _('Project %s').replace('%s', projectId),
                                 pathWithNamespace: '',
                                 webUrl: null,
                                 defaultBranch: null,

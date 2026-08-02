@@ -4,7 +4,10 @@ import Gio from 'gi://Gio';
 import GObject from 'gi://GObject';
 import Gtk from 'gi://Gtk';
 
-import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import {
+    ExtensionPreferences,
+    gettext as _,
+} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 import {GlabClient, normalizeHostname} from './glab-client.js';
 
@@ -14,12 +17,12 @@ const GitLabMonitorPreferencesPage = GObject.registerClass(
 class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
     constructor(settings) {
         super({
-            title: 'GitLab Monitor',
+            title: _('GitLab Monitor'),
             icon_name: 'system-run-symbolic',
         });
 
         this._settings = settings;
-        this._client = new GlabClient();
+        this._client = new GlabClient({translate: _});
         this._projectRows = [];
         this._refreshing = false;
 
@@ -31,13 +34,15 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
 
     _buildConnectionGroup() {
         const group = new Adw.PreferencesGroup({
-            title: 'Conexión',
-            description: 'La extensión reutiliza la sesión de GitLab CLI y no accede al token.',
+            title: _('Connection'),
+            description: _(
+                'The extension reuses the GitLab CLI session and does not access the token.'
+            ),
         });
         this.add(group);
 
         this._hostnameRow = new Adw.EntryRow({
-            title: 'Hostname de GitLab',
+            title: _('GitLab hostname'),
             text: this._settings.get_string('hostname'),
         });
         this._hostnameRow.connect('changed', row => {
@@ -46,17 +51,17 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
         group.add(this._hostnameRow);
 
         this._connectionStatus = new Adw.ActionRow({
-            title: 'Estado',
-            subtitle: 'Comprobando GitLab CLI…',
+            title: _('Status'),
+            subtitle: _('Checking GitLab CLI…'),
         });
         group.add(this._connectionStatus);
 
         const verifyRow = new Adw.ActionRow({
-            title: 'Verificar conexión',
-            subtitle: 'Comprueba glab y la sesión para este hostname.',
+            title: _('Check connection'),
+            subtitle: _('Check glab and the session for this hostname.'),
         });
         this._verifyButton = new Gtk.Button({
-            label: 'Verificar',
+            label: _('Check'),
             valign: Gtk.Align.CENTER,
         });
         this._verifyButton.connect('clicked', () => this._refreshConnection());
@@ -65,12 +70,12 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
         group.add(verifyRow);
 
         const loginRow = new Adw.ActionRow({
-            title: 'Comando de autenticación',
-            subtitle: 'Copia el comando y ejecútalo en una terminal.',
+            title: _('Authentication command'),
+            subtitle: _('Copy the command and run it in a terminal.'),
         });
         const copyButton = new Gtk.Button({
             icon_name: 'edit-copy-symbolic',
-            tooltip_text: 'Copiar comando',
+            tooltip_text: _('Copy command'),
             valign: Gtk.Align.CENTER,
         });
         copyButton.connect('clicked', () => this._copyLoginCommand());
@@ -81,13 +86,16 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
 
     _buildProjectGroup() {
         this._projectsGroup = new Adw.PreferencesGroup({
-            title: 'Proyectos',
-            description: `Seleccioná hasta ${MAX_PROJECTS} proyectos.`,
+            title: _('Projects'),
+            description: formatMessage(
+                _('Select up to %d projects.'),
+                MAX_PROJECTS
+            ),
         });
         this.add(this._projectsGroup);
 
         this._projectsStatus = new Adw.ActionRow({
-            title: 'Todavía no se cargaron proyectos',
+            title: _('No projects loaded yet'),
         });
         this._projectsGroup.add(this._projectsStatus);
         this._projectRows.push(this._projectsStatus);
@@ -95,13 +103,13 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
 
     _buildBehaviorGroup() {
         const group = new Adw.PreferencesGroup({
-            title: 'Comportamiento',
+            title: _('Behavior'),
         });
         this.add(group);
 
         const intervalRow = new Adw.SpinRow({
-            title: 'Intervalo de actualización',
-            subtitle: 'Segundos entre consultas automáticas.',
+            title: _('Refresh interval'),
+            subtitle: _('Seconds between automatic requests.'),
             adjustment: new Gtk.Adjustment({
                 lower: 30,
                 upper: 900,
@@ -117,8 +125,8 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
         group.add(intervalRow);
 
         const notificationsRow = new Adw.SwitchRow({
-            title: 'Notificaciones de pipelines',
-            subtitle: 'Notificar fallos y recuperaciones.',
+            title: _('Pipeline notifications'),
+            subtitle: _('Notify failures and recoveries.'),
         });
         this._settings.bind(
             'notifications-enabled',
@@ -129,8 +137,8 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
         group.add(notificationsRow);
 
         const mergeRequestNotificationsRow = new Adw.SwitchRow({
-            title: 'Notificaciones de merge requests',
-            subtitle: 'Notificar nuevos merge requests.',
+            title: _('Merge request notifications'),
+            subtitle: _('Notify new merge requests.'),
         });
         this._settings.bind(
             'merge-request-notifications-enabled',
@@ -141,8 +149,8 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
         group.add(mergeRequestNotificationsRow);
 
         const defaultBranchNotificationsRow = new Adw.SwitchRow({
-            title: 'Notificaciones de la rama principal',
-            subtitle: 'Notificar nuevos pushes a la rama predeterminada.',
+            title: _('Default branch notifications'),
+            subtitle: _('Notify new pushes to the default branch.'),
         });
         this._settings.bind(
             'default-branch-notifications-enabled',
@@ -159,23 +167,28 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
 
         this._refreshing = true;
         this._verifyButton.sensitive = false;
-        this._connectionStatus.subtitle = 'Comprobando…';
+        this._connectionStatus.subtitle = _('Checking…');
 
         try {
             if (!this._client.installed) {
                 this._connectionStatus.subtitle =
-                    'GitLab CLI (glab) no está instalado.';
-                this._showProjectMessage('Instalá glab para cargar proyectos.');
+                    _('GitLab CLI (glab) is not installed.');
+                this._showProjectMessage(_('Install glab to load projects.'));
                 return;
             }
 
-            const hostname = normalizeHostname(this._hostnameRow.text);
+            const hostname = normalizeHostname(this._hostnameRow.text, _);
             const authenticated =
                 await this._client.checkAuthentication(hostname);
             if (!authenticated) {
                 this._connectionStatus.subtitle =
-                    `No hay una sesión autenticada para ${hostname}.`;
-                this._showProjectMessage('Autenticate con glab y volvé a verificar.');
+                    formatMessage(
+                        _('No authenticated session for %s.'),
+                        hostname
+                    );
+                this._showProjectMessage(
+                    _('Authenticate with glab and check again.')
+                );
                 return;
             }
 
@@ -189,7 +202,7 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
             this._renderProjects(projects);
         } catch (error) {
             this._connectionStatus.subtitle = error.message;
-            this._showProjectMessage('No se pudieron cargar los proyectos.');
+            this._showProjectMessage(_('Could not load projects.'));
         } finally {
             this._verifyButton.sensitive = true;
             this._refreshing = false;
@@ -200,7 +213,7 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
         this._clearProjectRows();
 
         if (projects.length === 0) {
-            this._showProjectMessage('No se encontraron proyectos accesibles.');
+            this._showProjectMessage(_('No accessible projects found.'));
             return;
         }
 
@@ -229,7 +242,10 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
                     if (current.size >= MAX_PROJECTS) {
                         widget.active = false;
                         this._projectsGroup.description =
-                            `Podés seleccionar hasta ${MAX_PROJECTS} proyectos.`;
+                            formatMessage(
+                                _('You can select up to %d projects.'),
+                                MAX_PROJECTS
+                            );
                         return;
                     }
                     current.add(project.id);
@@ -242,7 +258,11 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
                     [...current]
                 );
                 this._projectsGroup.description =
-                    `${current.size} de ${MAX_PROJECTS} proyectos seleccionados.`;
+                    formatMessage(
+                        _('%d of %d projects selected.'),
+                        current.size,
+                        MAX_PROJECTS
+                    );
             });
 
             this._projectsGroup.add(row);
@@ -250,7 +270,11 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
         }
 
         this._projectsGroup.description =
-            `${selected.size} de ${MAX_PROJECTS} proyectos seleccionados.`;
+            formatMessage(
+                _('%d of %d projects selected.'),
+                selected.size,
+                MAX_PROJECTS
+            );
     }
 
     _showProjectMessage(message) {
@@ -269,7 +293,7 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
     _copyLoginCommand() {
         let hostname;
         try {
-            hostname = normalizeHostname(this._hostnameRow.text);
+            hostname = normalizeHostname(this._hostnameRow.text, _);
         } catch {
             hostname = 'gitlab.com';
         }
@@ -278,7 +302,7 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
             `glab auth login --hostname ${hostname} --web --use-keyring`;
         Gdk.Display.get_default().get_clipboard().set(command);
         this._connectionStatus.subtitle =
-            'Comando de autenticación copiado.';
+            _('Authentication command copied.');
     }
 });
 
@@ -287,4 +311,10 @@ export default class GitLabMonitorPreferences extends ExtensionPreferences {
         window.search_enabled = true;
         window.add(new GitLabMonitorPreferencesPage(this.getSettings()));
     }
+}
+
+function formatMessage(message, ...values) {
+    for (const value of values)
+        message = message.replace(/%[ds]/, String(value));
+    return message;
 }

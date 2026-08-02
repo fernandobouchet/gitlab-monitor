@@ -1,0 +1,215 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: gitlab-monitor\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "GitLab Monitor"
+msgstr "GitLab Monitor"
+
+msgid "Monitor read-only GitLab project activity, merge requests, and pipelines from GNOME Shell."
+msgstr "Supervisa desde GNOME Shell la actividad, los merge requests y los pipelines de proyectos de GitLab en modo de solo lectura."
+
+msgid "Not configured"
+msgstr "Sin configurar"
+
+msgid "Refresh"
+msgstr "Actualizar"
+
+msgid "Preferences"
+msgstr "Preferencias"
+
+msgid "Refreshing"
+msgstr "Actualizando"
+
+msgid "GitLab CLI is not installed"
+msgstr "GitLab CLI no está instalado"
+
+msgid "GitLab session is not available"
+msgstr "La sesión de GitLab no está disponible"
+
+msgid "No projects configured"
+msgstr "No hay proyectos configurados"
+
+msgid "Updated"
+msgstr "Actualizado"
+
+msgid "Could not query GitLab"
+msgstr "No se pudo consultar GitLab"
+
+msgid "Partial update"
+msgstr "Actualización parcial"
+
+msgid "Could not update"
+msgstr "No se pudo actualizar"
+
+#, javascript-format
+msgid "Could not update: %s"
+msgstr "No se pudo actualizar: %s"
+
+msgid "Untitled"
+msgstr "Sin título"
+
+msgid "No commits on the default branch"
+msgstr "No hay commits en la rama predeterminada"
+
+#, javascript-format
+msgid "(branch: %s)"
+msgstr "(rama: %s)"
+
+msgid "not defined"
+msgstr "sin definir"
+
+#, javascript-format
+msgid "GitLab Monitor: could not open the URL: %s"
+msgstr "GitLab Monitor: no se pudo abrir la URL: %s"
+
+msgid "Pipeline failed"
+msgstr "Pipeline fallido"
+
+msgid "Pipeline recovered"
+msgstr "Pipeline recuperado"
+
+msgid "New merge request"
+msgstr "Nuevo merge request"
+
+#, javascript-format
+msgid "New change on %s"
+msgstr "Nuevo cambio en %s"
+
+msgid "Connection"
+msgstr "Conexión"
+
+msgid "The extension reuses the GitLab CLI session and does not access the token."
+msgstr "La extensión reutiliza la sesión de GitLab CLI y no accede al token."
+
+msgid "GitLab hostname"
+msgstr "Hostname de GitLab"
+
+msgid "Status"
+msgstr "Estado"
+
+msgid "Checking GitLab CLI…"
+msgstr "Comprobando GitLab CLI…"
+
+msgid "Check connection"
+msgstr "Verificar conexión"
+
+msgid "Check glab and the session for this hostname."
+msgstr "Comprueba glab y la sesión para este hostname."
+
+msgid "Check"
+msgstr "Verificar"
+
+msgid "Authentication command"
+msgstr "Comando de autenticación"
+
+msgid "Copy the command and run it in a terminal."
+msgstr "Copia el comando y ejecútalo en una terminal."
+
+msgid "Copy command"
+msgstr "Copiar comando"
+
+msgid "Projects"
+msgstr "Proyectos"
+
+#, javascript-format
+msgid "Select up to %d projects."
+msgstr "Selecciona hasta %d proyectos."
+
+msgid "No projects loaded yet"
+msgstr "Todavía no se cargaron proyectos"
+
+msgid "Behavior"
+msgstr "Comportamiento"
+
+msgid "Refresh interval"
+msgstr "Intervalo de actualización"
+
+msgid "Seconds between automatic requests."
+msgstr "Segundos entre consultas automáticas."
+
+msgid "Pipeline notifications"
+msgstr "Notificaciones de pipelines"
+
+msgid "Notify failures and recoveries."
+msgstr "Notificar fallos y recuperaciones."
+
+msgid "Merge request notifications"
+msgstr "Notificaciones de merge requests"
+
+msgid "Notify new merge requests."
+msgstr "Notificar nuevos merge requests."
+
+msgid "Default branch notifications"
+msgstr "Notificaciones de la rama predeterminada"
+
+msgid "Notify new pushes to the default branch."
+msgstr "Notificar nuevos pushes a la rama predeterminada."
+
+msgid "Checking…"
+msgstr "Comprobando…"
+
+msgid "GitLab CLI (glab) is not installed."
+msgstr "GitLab CLI (glab) no está instalado."
+
+msgid "Install glab to load projects."
+msgstr "Instala glab para cargar proyectos."
+
+#, javascript-format
+msgid "No authenticated session for %s."
+msgstr "No hay una sesión autenticada para %s."
+
+msgid "Authenticate with glab and check again."
+msgstr "Autentícate con glab y vuelve a verificar."
+
+msgid "Could not load projects."
+msgstr "No se pudieron cargar los proyectos."
+
+msgid "No accessible projects found."
+msgstr "No se encontraron proyectos accesibles."
+
+#, javascript-format
+msgid "You can select up to %d projects."
+msgstr "Puedes seleccionar hasta %d proyectos."
+
+#, javascript-format
+msgid "%d of %d projects selected."
+msgstr "%d de %d proyectos seleccionados."
+
+msgid "Authentication command copied."
+msgstr "Comando de autenticación copiado."
+
+#, javascript-format
+msgid "Project %s"
+msgstr "Proyecto %s"
+
+msgid "The GitLab hostname is invalid"
+msgstr "El hostname de GitLab no es válido"
+
+msgid "The project ID is invalid"
+msgstr "El ID del proyecto no es válido"
+
+msgid "GitLab endpoint is not allowed"
+msgstr "El endpoint de GitLab no está permitido"
+
+msgid "GitLab CLI returned an invalid response"
+msgstr "GitLab CLI devolvió una respuesta no válida"
+
+msgid "Could not run GitLab CLI"
+msgstr "No se pudo ejecutar GitLab CLI"
+
+msgid "GitLab CLI timed out"
+msgstr "GitLab CLI excedió el tiempo de espera"
+
+msgid "[hidden token]"
+msgstr "[token oculto]"
+
+msgid "GitLab CLI could not complete the request"
+msgstr "GitLab CLI no pudo completar la consulta"
+
+msgid "Request cancelled"
+msgstr "Consulta cancelada"

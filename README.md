@@ -47,6 +47,8 @@ gnome-extensions pack \
   --extra-source=state-store.js \
   --extra-source=gitlab-symbolic.svg \
   --schema=schemas/org.gnome.shell.extensions.gitlab-monitor.gschema.xml \
+  --podir=po \
+  --gettext-domain=gitlab-monitor \
   .
 ```
 

@@ -22,25 +22,34 @@ export class GlabError extends Error {
     }
 }
 
-export function normalizeHostname(value) {
+export function normalizeHostname(value, translate = message => message) {
     let hostname = value.trim().toLowerCase();
 
     if (/^https?:\/\//.test(hostname))
         hostname = hostname.replace(/^https?:\/\//, '').split('/')[0];
     else if (hostname.includes('://'))
-        throw new GlabError('invalid-host', 'El hostname de GitLab no es válido');
+        throw new GlabError(
+            'invalid-host',
+            translate('The GitLab hostname is invalid')
+        );
 
     hostname = hostname.replace(/\/+$/, '');
     if (!/^[a-z0-9.-]+(?::\d+)?$/.test(hostname))
-        throw new GlabError('invalid-host', 'El hostname de GitLab no es válido');
+        throw new GlabError(
+            'invalid-host',
+            translate('The GitLab hostname is invalid')
+        );
 
     return hostname;
 }
 
-function assertProjectId(projectId) {
+function assertProjectId(projectId, translate) {
     const value = String(projectId);
     if (!/^\d+$/.test(value))
-        throw new GlabError('invalid-project', 'El ID del proyecto no es válido');
+        throw new GlabError(
+            'invalid-project',
+            translate('The project ID is invalid')
+        );
     return value;
 }
 
@@ -53,8 +62,12 @@ function encodeQuery(parameters) {
 }
 
 export class GlabClient {
-    constructor({timeoutSeconds = DEFAULT_TIMEOUT_SECONDS} = {}) {
+    constructor({
+        timeoutSeconds = DEFAULT_TIMEOUT_SECONDS,
+        translate = message => message,
+    } = {}) {
         this._timeoutSeconds = timeoutSeconds;
+        this._translate = translate;
         this._program = GLib.find_program_in_path('glab');
     }
 
@@ -69,7 +82,7 @@ export class GlabClient {
     }
 
     async checkAuthentication(hostname, cancellable = null) {
-        hostname = normalizeHostname(hostname);
+        hostname = normalizeHostname(hostname, this._translate);
 
         try {
             await this._run(
@@ -114,7 +127,7 @@ export class GlabClient {
     }
 
     async getProjectStatus(hostname, projectId, cancellable = null) {
-        const id = assertProjectId(projectId);
+        const id = assertProjectId(projectId, this._translate);
         const projectPath = `/projects/${id}`;
         const refreshedAt = new Date().toISOString();
 
@@ -176,10 +189,13 @@ export class GlabClient {
     }
 
     async _get(hostname, path, query, cancellable) {
-        hostname = normalizeHostname(hostname);
+        hostname = normalizeHostname(hostname, this._translate);
 
         if (!ALLOWED_ENDPOINTS.some(pattern => pattern.test(path)))
-            throw new GlabError('endpoint-denied', 'Endpoint de GitLab no permitido');
+            throw new GlabError(
+                'endpoint-denied',
+                this._translate('GitLab endpoint is not allowed')
+            );
 
         const queryString = encodeQuery(query);
         const endpointPath = path.replace(/^\//, '');
@@ -200,14 +216,17 @@ export class GlabClient {
         } catch {
             throw new GlabError(
                 'invalid-response',
-                'GitLab CLI devolvió una respuesta inválida'
+                this._translate('GitLab CLI returned an invalid response')
             );
         }
     }
 
     _run(args, cancellable = null, {includeErrorOutput = true} = {}) {
         if (!this.installed)
-            throw new GlabError('not-installed', 'GitLab CLI no está instalado');
+            throw new GlabError(
+                'not-installed',
+                this._translate('GitLab CLI is not installed')
+            );
 
         const commandCancellable = cancellable ?? new Gio.Cancellable();
         const launcher = new Gio.SubprocessLauncher({
@@ -221,7 +240,10 @@ export class GlabClient {
         try {
             process = launcher.spawnv([this._program, ...args]);
         } catch {
-            throw new GlabError('spawn-failed', 'No se pudo ejecutar GitLab CLI');
+            throw new GlabError(
+                'spawn-failed',
+                this._translate('Could not run GitLab CLI')
+            );
         }
 
         return new Promise((resolve, reject) => {
@@ -234,7 +256,7 @@ export class GlabClient {
                     process.force_exit();
                     reject(new GlabError(
                         'timeout',
-                        'GitLab CLI excedió el tiempo de espera'
+                        this._translate('GitLab CLI timed out')
                     ));
                     return GLib.SOURCE_REMOVE;
                 }
@@ -255,11 +277,16 @@ export class GlabClient {
 
                         if (!source.get_successful()) {
                             const detail = includeErrorOutput
-                                ? sanitizeError(stderr)
+                                ? sanitizeError(
+                                    stderr,
+                                    this._translate('[hidden token]')
+                                )
                                 : '';
                             reject(new GlabError(
                                 'command-failed',
-                                detail || 'GitLab CLI no pudo completar la consulta'
+                                detail || this._translate(
+                                    'GitLab CLI could not complete the request'
+                                )
                             ));
                             return;
                         }
@@ -269,12 +296,15 @@ export class GlabClient {
                         if (commandCancellable.is_cancelled()) {
                             reject(new GlabError(
                                 'cancelled',
-                                'Consulta cancelada'
+                                this._translate('Request cancelled')
                             ));
                         } else {
                             reject(new GlabError(
                                 'command-failed',
-                                sanitizeError(error.message)
+                                sanitizeError(
+                                    error.message,
+                                    this._translate('[hidden token]')
+                                )
                             ));
                         }
                     }
@@ -284,10 +314,10 @@ export class GlabClient {
     }
 }
 
-function sanitizeError(value = '') {
+function sanitizeError(value = '', hiddenToken = '[hidden token]') {
     const firstLine = value.trim().split('\n')[0];
     return firstLine
-        .replace(/glpat-[A-Za-z0-9_-]+/g, '[token oculto]')
+        .replace(/glpat-[A-Za-z0-9_-]+/g, hiddenToken)
         .slice(0, 240);
 }
 
