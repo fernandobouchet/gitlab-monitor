@@ -43,6 +43,8 @@ gnome-extensions pack \
   --extra-source=notifications.js \
   --extra-source=project-monitor.js \
   --extra-source=state-store.js \
+  --extra-source=branch-symbolic.svg \
+  --extra-source=git-symbolic.svg \
   --extra-source=LICENSE \
   --schema=schemas/org.gnome.shell.extensions.gitlab-monitor.gschema.xml \
   --podir=po \
@@ -125,6 +127,10 @@ and regions.
 ## License
 
 This project is licensed under GPL-2.0-or-later. See [LICENSE](LICENSE).
+
+The Git logomark is by Jason Long, licensed under
+[CC BY 3.0](https://creativecommons.org/licenses/by/3.0/), and adapted for
+symbolic rendering.
 
 ## Uninstallation
 

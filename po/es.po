@@ -79,10 +79,6 @@ msgstr "Sin título"
 msgid "No commits on the default branch"
 msgstr "No hay commits en la rama predeterminada"
 
-#, javascript-format
-msgid "(branch: %s)"
-msgstr "(rama: %s)"
-
 msgid "not defined"
 msgstr "sin definir"
 

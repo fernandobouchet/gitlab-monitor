@@ -31,6 +31,8 @@ jobs:
             --extra-source=notifications.js \
             --extra-source=project-monitor.js \
             --extra-source=state-store.js \
+            --extra-source=branch-symbolic.svg \
+            --extra-source=git-symbolic.svg \
             --extra-source=LICENSE \
             --schema=schemas/org.gnome.shell.extensions.gitlab-monitor.gschema.xml \
             --podir=po \

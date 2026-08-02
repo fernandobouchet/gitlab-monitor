@@ -72,10 +72,6 @@ msgstr ""
 msgid "No commits on the default branch"
 msgstr ""
 
-#, javascript-format
-msgid "(branch: %s)"
-msgstr ""
-
 msgid "not defined"
 msgstr ""
 

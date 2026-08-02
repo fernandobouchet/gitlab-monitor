@@ -5,8 +5,13 @@
     font-weight: bold;
 }
 
+.gitlab-monitor-header-text {
+    spacing: 4px;
+}
+
 .gitlab-monitor-icon-button {
-    padding: 2px 4px;
+    margin-left: 4px;
+    padding: 6px;
 }
 
 .gitlab-monitor-icon-button StIcon {
@@ -16,7 +21,7 @@
 .gitlab-monitor-project {
     min-width: 24em;
     padding-top: 6px;
-    padding-bottom: 0;
+    padding-bottom: 6px;
 }
 
 .gitlab-monitor-project-name {
@@ -26,6 +31,10 @@
 .gitlab-monitor-branch {
     color: rgba(255, 255, 255, 0.65);
     font-size: 0.9em;
+}
+
+.gitlab-monitor-branch-icon {
+    icon-size: 14px;
 }
 
 .panel-button.gitlab-monitor-indicator {
@@ -39,6 +48,6 @@
 }
 
 .popup-menu-item.gitlab-monitor-secondary {
-    padding-top: 2px;
+    padding-top: 6px;
     padding-bottom: 6px;
 }

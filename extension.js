@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Fernando Bouchet
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+import Clutter from 'gi://Clutter';
 import Gio from 'gi://Gio';
 import GObject from 'gi://GObject';
 import St from 'gi://St';
@@ -25,7 +26,9 @@ class GitLabIndicator extends PanelMenu.Button {
         this.add_style_class_name('gitlab-monitor-indicator');
 
         const icon = new St.Icon({
-            icon_name: 'folder-remote-symbolic',
+            gicon: Gio.icon_new_for_string(
+                `${extension.path}/git-symbolic.svg`
+            ),
             style_class: 'system-status-icon',
         });
         this.add_child(icon);
@@ -36,6 +39,7 @@ class GitLabIndicator extends PanelMenu.Button {
         const headerText = new St.BoxLayout({
             x_expand: true,
             vertical: true,
+            style_class: 'gitlab-monitor-header-text',
         });
         headerText.add_child(new St.Label({
             text: _('Monitor for GitLab'),
@@ -50,6 +54,7 @@ class GitLabIndicator extends PanelMenu.Button {
         this._refreshButton = new St.Button({
             style_class: 'button gitlab-monitor-icon-button',
             accessible_name: _('Refresh'),
+            y_align: Clutter.ActorAlign.CENTER,
             child: new St.Icon({icon_name: 'view-refresh-symbolic'}),
         });
         this._refreshButton.connect('clicked', onRefresh);
@@ -57,6 +62,7 @@ class GitLabIndicator extends PanelMenu.Button {
         const preferencesButton = new St.Button({
             style_class: 'button gitlab-monitor-icon-button',
             accessible_name: _('Preferences'),
+            y_align: Clutter.ActorAlign.CENTER,
             child: new St.Icon({icon_name: 'preferences-system-symbolic'}),
         });
         preferencesButton.connect('clicked', () => extension.openPreferences());
@@ -66,6 +72,10 @@ class GitLabIndicator extends PanelMenu.Button {
 
         this._projectsSection = new PopupMenu.PopupMenuSection();
         this.menu.addMenuItem(this._projectsSection);
+
+        this._branchIcon = Gio.icon_new_for_string(
+            `${extension.path}/branch-symbolic.svg`
+        );
     }
 
     setStatus(status) {
@@ -102,7 +112,10 @@ class GitLabIndicator extends PanelMenu.Button {
 
     _addProject(snapshot) {
         const {project, latestCommit, error} = snapshot;
-        this._projectsSection.addMenuItem(createProjectItem(project));
+        this._projectsSection.addMenuItem(createProjectItem(
+            project,
+            this._branchIcon
+        ));
 
         if (error) {
             const detail = error.trim().toLowerCase();
@@ -193,7 +206,7 @@ function createLinkItem(label, uri, styleClass = null) {
     return item;
 }
 
-function createProjectItem(project) {
+function createProjectItem(project, branchIcon) {
     const item = new PopupMenu.PopupBaseMenuItem({
         reactive: Boolean(project.webUrl),
     });
@@ -202,9 +215,13 @@ function createProjectItem(project) {
         text: project.name,
         style_class: 'gitlab-monitor-project-name',
     }));
+    item.add_child(new St.Label({text: ' · '}));
+    item.add_child(new St.Icon({
+        gicon: branchIcon,
+        style_class: 'gitlab-monitor-branch-icon',
+    }));
     item.add_child(new St.Label({
-        text: ` ${_('(branch: %s)').format(
-            project.defaultBranch ?? _('not defined'))}`,
+        text: ` ${project.defaultBranch ?? _('not defined')}`,
         style_class: 'gitlab-monitor-branch',
     }));
     if (project.webUrl)
