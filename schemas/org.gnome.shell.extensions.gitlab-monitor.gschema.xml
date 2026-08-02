@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.gitlab-monitor"
+          path="/org/gnome/shell/extensions/gitlab-monitor/">
+    <key name="hostname" type="s">
+      <default>'gitlab.com'</default>
+      <summary>GitLab hostname</summary>
+      <description>Hostname of the GitLab instance configured in glab.</description>
+    </key>
+    <key name="selected-projects" type="as">
+      <default>[]</default>
+      <summary>Selected project identifiers</summary>
+      <description>Numeric GitLab project IDs monitored by the extension.</description>
+    </key>
+    <key name="refresh-interval" type="u">
+      <range min="30" max="900"/>
+      <default>60</default>
+      <summary>Refresh interval</summary>
+      <description>Seconds between automatic read-only refreshes.</description>
+    </key>
+    <key name="notifications-enabled" type="b">
+      <default>true</default>
+      <summary>Pipeline notifications</summary>
+      <description>Notify when a pipeline fails or recovers.</description>
+    </key>
+    <key name="merge-request-notifications-enabled" type="b">
+      <default>false</default>
+      <summary>Merge request notifications</summary>
+      <description>Notify when a merge request is created.</description>
+    </key>
+    <key name="default-branch-notifications-enabled" type="b">
+      <default>false</default>
+      <summary>Default branch notifications</summary>
+      <description>Notify when a push reaches the default branch.</description>
+    </key>
+  </schema>
+</schemalist>

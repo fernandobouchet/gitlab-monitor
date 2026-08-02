@@ -1,0 +1,8 @@
+{
+  "uuid": "gitlab-monitor@fernandobouchet",
+  "name": "GitLab Monitor",
+  "description": "Monitor read-only GitLab project activity, merge requests, and pipelines from GNOME Shell.",
+  "shell-version": ["50"],
+  "settings-schema": "org.gnome.shell.extensions.gitlab-monitor",
+  "url": "https://gitlab.com"
+}
