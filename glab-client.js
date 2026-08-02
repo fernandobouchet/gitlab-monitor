@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Fernando Bouchet
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 
@@ -11,7 +14,6 @@ const ALLOWED_ENDPOINTS = [
     /^\/projects\/\d+\/repository\/commits$/,
     /^\/projects\/\d+\/merge_requests$/,
     /^\/projects\/\d+\/pipelines$/,
-    /^\/projects\/\d+\/pipelines\/\d+$/,
 ];
 
 export class GlabError extends Error {
@@ -176,7 +178,6 @@ export class GlabClient {
                 webUrl: project.web_url,
                 defaultBranch: project.default_branch,
             },
-            latestChange: recentEvents[0] ?? null,
             latestCommit: normalizeCommit(commits[0]),
             latestDefaultBranchPush: project.default_branch
                 ? recentEvents.find(event =>

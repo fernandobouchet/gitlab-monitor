@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Fernando Bouchet
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 import Gio from 'gi://Gio';
 import GObject from 'gi://GObject';
 import St from 'gi://St';
@@ -18,17 +21,14 @@ import {StateStore} from './state-store.js';
 const GitLabIndicator = GObject.registerClass(
 class GitLabIndicator extends PanelMenu.Button {
     constructor(extension, onRefresh) {
-        super(0.5, _('GitLab Monitor'));
+        super(0.5, _('Monitor for GitLab'));
         this.add_style_class_name('gitlab-monitor-indicator');
 
-        this._extension = extension;
-        this._icon = new St.Icon({
-            gicon: Gio.icon_new_for_string(
-                `${extension.path}/gitlab-symbolic.svg`
-            ),
+        const icon = new St.Icon({
+            icon_name: 'folder-remote-symbolic',
             style_class: 'system-status-icon',
         });
-        this.add_child(this._icon);
+        this.add_child(icon);
 
         const header = new PopupMenu.PopupBaseMenuItem({
             reactive: false,
@@ -38,7 +38,7 @@ class GitLabIndicator extends PanelMenu.Button {
             vertical: true,
         });
         headerText.add_child(new St.Label({
-            text: _('GitLab Monitor'),
+            text: _('Monitor for GitLab'),
             style_class: 'gitlab-monitor-title',
         }));
         this._statusLabel = new St.Label({
@@ -108,7 +108,7 @@ class GitLabIndicator extends PanelMenu.Button {
             const detail = error.trim().toLowerCase();
             const message = detail === 'error'
                 ? _('Could not update')
-                : _('Could not update: %s').replace('%s', error);
+                : _('Could not update: %s').format(error);
             this._projectsSection.addMenuItem(createInfoItem(`  ${message}`));
         } else if (latestCommit) {
             const commitTitle = truncate(latestCommit.title, 28) || _('Untitled');
@@ -131,10 +131,9 @@ class GitLabIndicator extends PanelMenu.Button {
 export default class GitLabMonitorExtension extends Extension {
     enable() {
         this._settings = this.getSettings();
-        this._client = new GlabClient({translate: _});
-        this._stateStore = new StateStore();
+        const client = new GlabClient({translate: _});
+        const stateStore = new StateStore();
         this._notifications = new NotificationManager();
-        this._snapshots = [];
 
         this._indicator = new GitLabIndicator(
             this,
@@ -143,11 +142,10 @@ export default class GitLabMonitorExtension extends Extension {
         Main.panel.addToStatusArea(this.uuid, this._indicator);
 
         this._monitor = new ProjectMonitor({
-            client: this._client,
+            client,
             settings: this._settings,
-            stateStore: this._stateStore,
+            stateStore,
             onUpdate: snapshots => {
-                this._snapshots = snapshots;
                 this._indicator?.setProjects(snapshots);
             },
             onTransition: transition => {
@@ -180,9 +178,6 @@ export default class GitLabMonitorExtension extends Extension {
         this._monitor = null;
         this._notifications = null;
         this._indicator = null;
-        this._stateStore = null;
-        this._client = null;
-        this._snapshots = null;
         this._settings = null;
     }
 }
@@ -208,8 +203,8 @@ function createProjectItem(project) {
         style_class: 'gitlab-monitor-project-name',
     }));
     item.add_child(new St.Label({
-        text: ` ${_('(branch: %s)').replace(
-            '%s', project.defaultBranch ?? _('not defined'))}`,
+        text: ` ${_('(branch: %s)').format(
+            project.defaultBranch ?? _('not defined'))}`,
         style_class: 'gitlab-monitor-branch',
     }));
     if (project.webUrl)
@@ -231,8 +226,8 @@ function openUri(uri) {
         Gio.AppInfo.launch_default_for_uri(uri, null);
     } catch (error) {
         console.error(
-            _('GitLab Monitor: could not open the URL: %s')
-                .replace('%s', error.message)
+            _('Monitor for GitLab: could not open the URL: %s')
+                .format(error.message)
         );
     }
 }

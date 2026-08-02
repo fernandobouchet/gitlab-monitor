@@ -1,9 +1,9 @@
 {
   "uuid": "gitlab-monitor@fernandobouchet",
-  "name": "GitLab Monitor",
-  "description": "Monitor read-only GitLab project activity, merge requests, and pipelines from GNOME Shell.",
+  "name": "Monitor for GitLab",
+  "description": "Monitor GitLab projects from GNOME Shell. Requires GitLab CLI (glab) and can copy a login command to the clipboard after user action.\n\nThis extension is not affiliated, endorsed, sponsored, or approved with or by GitLab Inc.\n\nGITLAB is a trademark of GitLab Inc. in the United States and other countries and regions.",
   "shell-version": ["50"],
   "gettext-domain": "gitlab-monitor",
   "settings-schema": "org.gnome.shell.extensions.gitlab-monitor",
-  "url": "https://gitlab.com"
+  "url": "https://github.com/fernandobouchet/gitlab-monitor"
 }

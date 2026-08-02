@@ -1,0 +1,232 @@
+# SPDX-FileCopyrightText: 2026 Fernando Bouchet
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Translation template for Monitor for GitLab.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gitlab-monitor\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-02 19:39-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Monitor for GitLab"
+msgstr ""
+
+msgid ""
+"Monitor GitLab projects from GNOME Shell. Requires GitLab CLI (glab) and can "
+"copy a login command to the clipboard after user action.\n"
+"\n"
+"This extension is not affiliated, endorsed, sponsored, or approved with or "
+"by GitLab Inc.\n"
+"\n"
+"GITLAB is a trademark of GitLab Inc. in the United States and other "
+"countries and regions."
+msgstr ""
+
+msgid "Not configured"
+msgstr ""
+
+msgid "Refresh"
+msgstr ""
+
+msgid "Preferences"
+msgstr ""
+
+msgid "Refreshing"
+msgstr ""
+
+msgid "GitLab CLI is not installed"
+msgstr ""
+
+msgid "GitLab session is not available"
+msgstr ""
+
+msgid "No projects configured"
+msgstr ""
+
+msgid "Updated"
+msgstr ""
+
+msgid "Could not query GitLab"
+msgstr ""
+
+msgid "Partial update"
+msgstr ""
+
+msgid "Could not update"
+msgstr ""
+
+#, javascript-format
+msgid "Could not update: %s"
+msgstr ""
+
+msgid "Untitled"
+msgstr ""
+
+msgid "No commits on the default branch"
+msgstr ""
+
+#, javascript-format
+msgid "(branch: %s)"
+msgstr ""
+
+msgid "not defined"
+msgstr ""
+
+#, javascript-format
+msgid "Monitor for GitLab: could not open the URL: %s"
+msgstr ""
+
+msgid "Pipeline failed"
+msgstr ""
+
+msgid "Pipeline recovered"
+msgstr ""
+
+msgid "New merge request"
+msgstr ""
+
+#, javascript-format
+msgid "New change on %s"
+msgstr ""
+
+msgid "Connection"
+msgstr ""
+
+msgid ""
+"The extension reuses the GitLab CLI session and does not access the token."
+msgstr ""
+
+msgid "GitLab hostname"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Checking GitLab CLI…"
+msgstr ""
+
+msgid "Check connection"
+msgstr ""
+
+msgid "Check glab and the session for this hostname."
+msgstr ""
+
+msgid "Check"
+msgstr ""
+
+msgid "Authentication command"
+msgstr ""
+
+msgid "Copy the command and run it in a terminal."
+msgstr ""
+
+msgid "Copy command"
+msgstr ""
+
+msgid "Projects"
+msgstr ""
+
+#, javascript-format
+msgid "Select up to %d projects."
+msgstr ""
+
+msgid "No projects loaded yet"
+msgstr ""
+
+msgid "Behavior"
+msgstr ""
+
+msgid "Refresh interval"
+msgstr ""
+
+msgid "Seconds between automatic requests."
+msgstr ""
+
+msgid "Pipeline notifications"
+msgstr ""
+
+msgid "Notify failures and recoveries."
+msgstr ""
+
+msgid "Merge request notifications"
+msgstr ""
+
+msgid "Notify new merge requests."
+msgstr ""
+
+msgid "Default branch notifications"
+msgstr ""
+
+msgid "Notify new pushes to the default branch."
+msgstr ""
+
+msgid "Checking…"
+msgstr ""
+
+msgid "GitLab CLI (glab) is not installed."
+msgstr ""
+
+msgid "Install glab to load projects."
+msgstr ""
+
+#, javascript-format
+msgid "No authenticated session for %s."
+msgstr ""
+
+msgid "Authenticate with glab and check again."
+msgstr ""
+
+msgid "Could not load projects."
+msgstr ""
+
+msgid "No accessible projects found."
+msgstr ""
+
+#, javascript-format
+msgid "You can select up to %d projects."
+msgstr ""
+
+#, javascript-format
+msgid "Selected projects: %d of %d"
+msgstr ""
+
+msgid "Authentication command copied."
+msgstr ""
+
+#, javascript-format
+msgid "Project %s"
+msgstr ""
+
+msgid "The GitLab hostname is invalid"
+msgstr ""
+
+msgid "The project ID is invalid"
+msgstr ""
+
+msgid "GitLab endpoint is not allowed"
+msgstr ""
+
+msgid "GitLab CLI returned an invalid response"
+msgstr ""
+
+msgid "Could not run GitLab CLI"
+msgstr ""
+
+msgid "GitLab CLI timed out"
+msgstr ""
+
+msgid "[hidden token]"
+msgstr ""
+
+msgid "GitLab CLI could not complete the request"
+msgstr ""
+
+msgid "Request cancelled"
+msgstr ""

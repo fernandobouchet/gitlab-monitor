@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-FileCopyrightText: 2026 Fernando Bouchet -->
+<!-- SPDX-License-Identifier: GPL-2.0-or-later -->
 <schemalist>
   <schema id="org.gnome.shell.extensions.gitlab-monitor"
           path="/org/gnome/shell/extensions/gitlab-monitor/">

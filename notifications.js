@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Fernando Bouchet
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 import Gio from 'gi://Gio';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
@@ -43,7 +46,7 @@ export class NotificationManager {
             return this._source;
 
         this._source = new MessageTray.Source({
-            title: _('GitLab Monitor'),
+            title: _('Monitor for GitLab'),
             iconName: 'system-run-symbolic',
         });
         this._source.connect('destroy', () => {
@@ -89,10 +92,8 @@ function getNotificationContent(transition) {
 
     if (transition.type === 'default-branch-pushed') {
         return {
-            title: _('New change on %s').replace(
-                '%s',
-                transition.project.defaultBranch
-            ),
+            title: _('New change on %s')
+                .format(transition.project.defaultBranch),
             body: `${project} · ${transition.change.title}`,
             iconName: 'dialog-information-symbolic',
             webUrl: transition.change.webUrl,
@@ -110,8 +111,8 @@ function openUri(uri) {
         Gio.AppInfo.launch_default_for_uri(uri, null);
     } catch (error) {
         console.error(
-            _('GitLab Monitor: could not open the URL: %s')
-                .replace('%s', error.message)
+            _('Monitor for GitLab: could not open the URL: %s')
+                .format(error.message)
         );
     }
 }

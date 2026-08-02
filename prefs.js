@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Fernando Bouchet
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 import Adw from 'gi://Adw';
 import Gdk from 'gi://Gdk';
 import Gio from 'gi://Gio';
@@ -17,7 +20,7 @@ const GitLabMonitorPreferencesPage = GObject.registerClass(
 class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
     constructor(settings) {
         super({
-            title: _('GitLab Monitor'),
+            title: _('Monitor for GitLab'),
             icon_name: 'system-run-symbolic',
         });
 
@@ -87,10 +90,7 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
     _buildProjectGroup() {
         this._projectsGroup = new Adw.PreferencesGroup({
             title: _('Projects'),
-            description: formatMessage(
-                _('Select up to %d projects.'),
-                MAX_PROJECTS
-            ),
+            description: _('Select up to %d projects.').format(MAX_PROJECTS),
         });
         this.add(this._projectsGroup);
 
@@ -182,10 +182,7 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
                 await this._client.checkAuthentication(hostname);
             if (!authenticated) {
                 this._connectionStatus.subtitle =
-                    formatMessage(
-                        _('No authenticated session for %s.'),
-                        hostname
-                    );
+                    _('No authenticated session for %s.').format(hostname);
                 this._showProjectMessage(
                     _('Authenticate with glab and check again.')
                 );
@@ -242,10 +239,8 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
                     if (current.size >= MAX_PROJECTS) {
                         widget.active = false;
                         this._projectsGroup.description =
-                            formatMessage(
-                                _('You can select up to %d projects.'),
-                                MAX_PROJECTS
-                            );
+                            _('You can select up to %d projects.')
+                                .format(MAX_PROJECTS);
                         return;
                     }
                     current.add(project.id);
@@ -258,11 +253,8 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
                     [...current]
                 );
                 this._projectsGroup.description =
-                    formatMessage(
-                        _('%d of %d projects selected.'),
-                        current.size,
-                        MAX_PROJECTS
-                    );
+                    _('Selected projects: %d of %d')
+                        .format(current.size, MAX_PROJECTS);
             });
 
             this._projectsGroup.add(row);
@@ -270,11 +262,8 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
         }
 
         this._projectsGroup.description =
-            formatMessage(
-                _('%d of %d projects selected.'),
-                selected.size,
-                MAX_PROJECTS
-            );
+            _('Selected projects: %d of %d')
+                .format(selected.size, MAX_PROJECTS);
     }
 
     _showProjectMessage(message) {
@@ -311,10 +300,4 @@ export default class GitLabMonitorPreferences extends ExtensionPreferences {
         window.search_enabled = true;
         window.add(new GitLabMonitorPreferencesPage(this.getSettings()));
     }
-}
-
-function formatMessage(message, ...values) {
-    for (const value of values)
-        message = message.replace(/%[ds]/, String(value));
-    return message;
 }

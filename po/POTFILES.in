@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Fernando Bouchet
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 extension.js
 glab-client.js
 metadata.json

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Fernando Bouchet
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 export class StateStore {
     constructor() {
         this._snapshots = new Map();
@@ -28,10 +31,6 @@ export class StateStore {
             if (!retained.has(projectId))
                 this._snapshots.delete(projectId);
         }
-    }
-
-    clear() {
-        this._snapshots.clear();
     }
 }
 

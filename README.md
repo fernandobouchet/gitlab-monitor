@@ -1,8 +1,6 @@
-# GitLab Monitor
+# Monitor for GitLab
 
 Read-only GNOME Shell extension for monitoring activity, merge requests, and pipelines across selected GitLab projects.
-
-The MVP scope and design decisions are documented in [MVP.md](MVP.md).
 
 ## Status
 
@@ -13,7 +11,7 @@ Initial MVP implemented for GNOME Shell 50:
 - Recent activity, open merge requests, and latest pipeline.
 - Manual refresh and configurable polling.
 - Optional notifications for pipelines, new merge requests, and pushes to the default branch.
-- Links to open each resource in GitLab.
+- Links to open projects and latest commits in GitLab.
 - GitLab access restricted to an allowlist of `GET` requests.
 
 ## Requirements
@@ -45,7 +43,7 @@ gnome-extensions pack \
   --extra-source=notifications.js \
   --extra-source=project-monitor.js \
   --extra-source=state-store.js \
-  --extra-source=gitlab-symbolic.svg \
+  --extra-source=LICENSE \
   --schema=schemas/org.gnome.shell.extensions.gitlab-monitor.gschema.xml \
   --podir=po \
   --gettext-domain=gitlab-monitor \
@@ -86,7 +84,7 @@ git push origin v0.1.0
 2. Verify the hostname and `glab` session.
 3. Select one or more projects.
 4. Open the indicator menu.
-5. Check the activity, merge requests, and pipeline information.
+5. Check each project's branch and latest commit.
 6. Use the refresh action.
 7. Open an item and confirm that it leads to GitLab.
 8. Disable and re-enable the extension.
@@ -110,7 +108,23 @@ glab api --method GET <allowed endpoint>
 The allowlist includes the default branch's latest commit query through
 `GET /projects/:id/repository/commits`.
 
-It does not perform actions on merge requests, pipelines, or projects. Each item only provides a link to GitLab.
+It does not perform actions on merge requests, pipelines, or projects. Project
+and commit items only provide links to GitLab.
+
+The preferences can copy the `glab` login command to the clipboard, but only
+after the user activates the copy button.
+
+## Trademark notice
+
+This extension is not affiliated, endorsed, sponsored, or approved with or by
+GitLab Inc.
+
+GITLAB is a trademark of GitLab Inc. in the United States and other countries
+and regions.
+
+## License
+
+This project is licensed under GPL-2.0-or-later. See [LICENSE](LICENSE).
 
 ## Uninstallation
 

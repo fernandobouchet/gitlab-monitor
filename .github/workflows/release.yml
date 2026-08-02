@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Fernando Bouchet
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 name: Release
 
 on:
@@ -28,8 +31,10 @@ jobs:
             --extra-source=notifications.js \
             --extra-source=project-monitor.js \
             --extra-source=state-store.js \
-            --extra-source=gitlab-symbolic.svg \
+            --extra-source=LICENSE \
             --schema=schemas/org.gnome.shell.extensions.gitlab-monitor.gschema.xml \
+            --podir=po \
+            --gettext-domain=gitlab-monitor \
             .
 
       - name: Create GitHub release

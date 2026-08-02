@@ -1,17 +1,40 @@
+# SPDX-FileCopyrightText: 2026 Fernando Bouchet
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 msgid ""
 msgstr ""
 "Project-Id-Version: gitlab-monitor\n"
+"PO-Revision-Date: 2026-08-02 19:45-0300\n"
+"Last-Translator: Fernando Bouchet <fernandobouchet@users.noreply.github.com>\n"
+"Language-Team: Spanish\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "GitLab Monitor"
-msgstr "GitLab Monitor"
+msgid "Monitor for GitLab"
+msgstr "Monitor for GitLab"
 
-msgid "Monitor read-only GitLab project activity, merge requests, and pipelines from GNOME Shell."
-msgstr "Supervisa desde GNOME Shell la actividad, los merge requests y los pipelines de proyectos de GitLab en modo de solo lectura."
+msgid ""
+"Monitor GitLab projects from GNOME Shell. Requires GitLab CLI (glab) and can "
+"copy a login command to the clipboard after user action.\n"
+"\n"
+"This extension is not affiliated, endorsed, sponsored, or approved with or "
+"by GitLab Inc.\n"
+"\n"
+"GITLAB is a trademark of GitLab Inc. in the United States and other "
+"countries and regions."
+msgstr ""
+"Supervisa proyectos de GitLab desde GNOME Shell. Requiere GitLab CLI (glab) "
+"y puede copiar un comando de inicio de sesión al portapapeles después de una "
+"acción del usuario.\n"
+"\n"
+"Esta extensión no está afiliada, respaldada, patrocinada ni aprobada por "
+"GitLab Inc.\n"
+"\n"
+"GITLAB es una marca comercial de GitLab Inc. en Estados Unidos y otros "
+"países y regiones."
 
 msgid "Not configured"
 msgstr "Sin configurar"
@@ -64,8 +87,8 @@ msgid "not defined"
 msgstr "sin definir"
 
 #, javascript-format
-msgid "GitLab Monitor: could not open the URL: %s"
-msgstr "GitLab Monitor: no se pudo abrir la URL: %s"
+msgid "Monitor for GitLab: could not open the URL: %s"
+msgstr "Monitor for GitLab: no se pudo abrir la URL: %s"
 
 msgid "Pipeline failed"
 msgstr "Pipeline fallido"
@@ -177,8 +200,8 @@ msgid "You can select up to %d projects."
 msgstr "Puedes seleccionar hasta %d proyectos."
 
 #, javascript-format
-msgid "%d of %d projects selected."
-msgstr "%d de %d proyectos seleccionados."
+msgid "Selected projects: %d of %d"
+msgstr "Proyectos seleccionados: %d de %d"
 
 msgid "Authentication command copied."
 msgstr "Comando de autenticación copiado."

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Fernando Bouchet
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 import {gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
@@ -112,12 +115,11 @@ export class ProjectMonitor {
                         : {
                             project: {
                                 id: projectId,
-                                name: _('Project %s').replace('%s', projectId),
+                                name: _('Project %s').format(projectId),
                                 pathWithNamespace: '',
                                 webUrl: null,
                                 defaultBranch: null,
                             },
-                            latestChange: null,
                             latestCommit: null,
                             latestDefaultBranchPush: null,
                             mergeRequests: [],
