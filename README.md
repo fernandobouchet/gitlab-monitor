@@ -35,6 +35,13 @@ For GitLab Self-Managed, replace `gitlab.com` with the appropriate hostname.
 
 ## Local installation
 
+The packaging command requires GNOME Shell extension tools and `gettext`
+(`msgfmt`). On Debian or Ubuntu, install them with:
+
+```bash
+sudo apt install gettext gnome-shell
+```
+
 From the project root:
 
 ```bash
