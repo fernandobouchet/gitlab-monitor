@@ -248,13 +248,32 @@ export class GlabClient {
         }
 
         return new Promise((resolve, reject) => {
-            let timeoutId = GLib.timeout_add_seconds(
+            let timeoutId = 0;
+            let cancellationId = 0;
+            const cleanup = () => {
+                if (timeoutId) {
+                    GLib.source_remove(timeoutId);
+                    timeoutId = 0;
+                }
+
+                if (cancellationId) {
+                    commandCancellable.disconnect(cancellationId);
+                    cancellationId = 0;
+                }
+            };
+
+            cancellationId = commandCancellable.connect(() => {
+                process.force_exit();
+            });
+
+            timeoutId = GLib.timeout_add_seconds(
                 GLib.PRIORITY_DEFAULT,
                 this._timeoutSeconds,
                 () => {
                     timeoutId = 0;
                     commandCancellable.cancel();
                     process.force_exit();
+                    cleanup();
                     reject(new GlabError(
                         'timeout',
                         this._translate('GitLab CLI timed out')
@@ -267,10 +286,7 @@ export class GlabClient {
                 null,
                 commandCancellable,
                 (source, result) => {
-                    if (timeoutId) {
-                        GLib.source_remove(timeoutId);
-                        timeoutId = 0;
-                    }
+                    cleanup();
 
                     try {
                         const [, stdout, stderr] =

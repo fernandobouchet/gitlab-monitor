@@ -30,6 +30,7 @@ export class ProjectMonitor {
         this._cancellable = null;
         this._settingsSignals = [];
         this._consecutiveErrors = 0;
+        this._snapshots = [];
     }
 
     start() {
@@ -40,7 +41,13 @@ export class ProjectMonitor {
             this._settings.connect('changed::hostname',
                 () => this.refresh()),
             this._settings.connect('changed::refresh-interval',
-                () => this._scheduleNext())
+                () => this._scheduleNext()),
+            this._settings.connect('changed::show-latest-commit',
+                () => this._onUpdate(this._snapshots)),
+            this._settings.connect('changed::show-pipelines',
+                () => this._onUpdate(this._snapshots)),
+            this._settings.connect('changed::show-merge-requests',
+                () => this._onUpdate(this._snapshots))
         );
         this.refresh();
     }
@@ -70,14 +77,14 @@ export class ProjectMonitor {
 
         if (!this._client.installed) {
             this._onStatus('missing-cli');
-            this._onUpdate([]);
+            this._setSnapshots([]);
             this._scheduleNext();
             return;
         }
 
         if (projectIds.length === 0) {
             this._onStatus('not-configured');
-            this._onUpdate([]);
+            this._setSnapshots([]);
             this._scheduleNext();
             return;
         }
@@ -137,7 +144,7 @@ export class ProjectMonitor {
             );
             if (!authenticated) {
                 this._consecutiveErrors++;
-                this._onUpdate(projectIds
+                this._setSnapshots(projectIds
                     .map(id => this._stateStore.get(id))
                     .filter(Boolean));
                 this._onStatus('unauthenticated');
@@ -157,7 +164,7 @@ export class ProjectMonitor {
             const ordered = projectIds
                 .map(id => statuses.get(id))
                 .filter(Boolean);
-            this._onUpdate(ordered);
+            this._setSnapshots(ordered);
 
             if (errorCount === projectIds.length) {
                 this._consecutiveErrors++;
@@ -169,7 +176,7 @@ export class ProjectMonitor {
         } catch {
             if (!this._stopped) {
                 this._consecutiveErrors++;
-                this._onUpdate(projectIds
+                this._setSnapshots(projectIds
                     .map(id => this._stateStore.get(id))
                     .filter(Boolean));
                 this._onStatus('error');
@@ -207,5 +214,10 @@ export class ProjectMonitor {
             return;
         GLib.source_remove(this._timerId);
         this._timerId = 0;
+    }
+
+    _setSnapshots(snapshots) {
+        this._snapshots = snapshots;
+        this._onUpdate(snapshots);
     }
 }

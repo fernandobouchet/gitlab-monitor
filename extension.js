@@ -21,8 +21,9 @@ import {StateStore} from './state-store.js';
 
 const GitLabIndicator = GObject.registerClass(
 class GitLabIndicator extends PanelMenu.Button {
-    constructor(extension, onRefresh) {
+    constructor(extension, onRefresh, settings) {
         super(0.5, _('Monitor for GitLab'));
+        this._settings = settings;
         this.add_style_class_name('gitlab-monitor-indicator');
 
         const icon = new St.Icon({
@@ -38,7 +39,7 @@ class GitLabIndicator extends PanelMenu.Button {
         });
         const headerText = new St.BoxLayout({
             x_expand: true,
-            vertical: true,
+            orientation: Clutter.Orientation.VERTICAL,
             style_class: 'gitlab-monitor-header-text',
         });
         headerText.add_child(new St.Label({
@@ -76,6 +77,9 @@ class GitLabIndicator extends PanelMenu.Button {
         this._branchIcon = Gio.icon_new_for_string(
             `${extension.path}/branch-symbolic.svg`
         );
+        this._externalLinkIcon = Gio.icon_new_for_string(
+            `${extension.path}/external-link-symbolic.svg`
+        );
     }
 
     setStatus(status) {
@@ -111,10 +115,17 @@ class GitLabIndicator extends PanelMenu.Button {
     }
 
     _addProject(snapshot) {
-        const {project, latestCommit, error} = snapshot;
+        const {
+            project,
+            latestCommit,
+            mergeRequests,
+            latestPipeline,
+            error,
+        } = snapshot;
         this._projectsSection.addMenuItem(createProjectItem(
             project,
-            this._branchIcon
+            this._branchIcon,
+            this._externalLinkIcon
         ));
 
         if (error) {
@@ -123,7 +134,9 @@ class GitLabIndicator extends PanelMenu.Button {
                 ? _('Could not update')
                 : _('Could not update: %s').format(error);
             this._projectsSection.addMenuItem(createInfoItem(`  ${message}`));
-        } else if (latestCommit) {
+        } else if (
+            this._settings.get_boolean('show-latest-commit') && latestCommit
+        ) {
             const commitTitle = truncate(latestCommit.title, 28) || _('Untitled');
             const committedAt = formatDateTime(
                 new Date(latestCommit.committedAt)
@@ -131,12 +144,41 @@ class GitLabIndicator extends PanelMenu.Button {
             this._projectsSection.addMenuItem(createLinkItem(
                 `  ${commitTitle} · ${latestCommit.shortId} · ${committedAt}`,
                 latestCommit.webUrl,
-                'gitlab-monitor-secondary'
+                'gitlab-monitor-secondary',
+                this._externalLinkIcon
             ));
-        } else {
+        } else if (this._settings.get_boolean('show-latest-commit')) {
             this._projectsSection.addMenuItem(createInfoItem(
                 `  ${_('No commits on the default branch')}`
             ));
+        }
+
+        if (this._settings.get_boolean('show-pipelines') && latestPipeline) {
+            const number = latestPipeline.iid ?? latestPipeline.id;
+            this._projectsSection.addMenuItem(createLinkItem(
+                _('Pipeline #%s · %s · %s').format(
+                    number,
+                    latestPipeline.ref ?? '',
+                    latestPipeline.status ?? ''
+                ),
+                latestPipeline.webUrl,
+                null,
+                this._externalLinkIcon
+            ));
+        }
+
+        if (this._settings.get_boolean('show-merge-requests')) {
+            for (const mergeRequest of mergeRequests.slice(0, 3)) {
+                this._projectsSection.addMenuItem(createLinkItem(
+                    _('MR !%s · %s').format(
+                        mergeRequest.iid,
+                        truncate(mergeRequest.title, 42)
+                    ),
+                    mergeRequest.webUrl,
+                    null,
+                    this._externalLinkIcon
+                ));
+            }
         }
     }
 });
@@ -150,7 +192,8 @@ export default class GitLabMonitorExtension extends Extension {
 
         this._indicator = new GitLabIndicator(
             this,
-            () => this._monitor?.refresh()
+            () => this._monitor?.refresh(),
+            this._settings
         );
         Main.panel.addToStatusArea(this.uuid, this._indicator);
 
@@ -195,18 +238,25 @@ export default class GitLabMonitorExtension extends Extension {
     }
 }
 
-function createLinkItem(label, uri, styleClass = null) {
+function createLinkItem(
+    label,
+    uri,
+    styleClass = null,
+    externalLinkIcon = null
+) {
     const item = new PopupMenu.PopupMenuItem(label, {
         reactive: Boolean(uri),
     });
     if (styleClass)
         item.add_style_class_name(styleClass);
-    if (uri)
+    if (uri) {
         item.connect('activate', () => openUri(uri));
+        addExternalLinkIndicator(item, externalLinkIcon);
+    }
     return item;
 }
 
-function createProjectItem(project, branchIcon) {
+function createProjectItem(project, branchIcon, externalLinkIcon) {
     const item = new PopupMenu.PopupBaseMenuItem({
         reactive: Boolean(project.webUrl),
     });
@@ -224,9 +274,21 @@ function createProjectItem(project, branchIcon) {
         text: ` ${project.defaultBranch ?? _('not defined')}`,
         style_class: 'gitlab-monitor-branch',
     }));
-    if (project.webUrl)
+    if (project.webUrl) {
         item.connect('activate', () => openUri(project.webUrl));
+        addExternalLinkIndicator(item, externalLinkIcon);
+    }
     return item;
+}
+
+function addExternalLinkIndicator(item, externalLinkIcon) {
+    item.cursor_type = Clutter.CursorType.POINTER;
+    item.add_child(new St.Widget({x_expand: true}));
+    item.add_child(new St.Icon({
+        gicon: externalLinkIcon,
+        style_class: 'gitlab-monitor-external-link',
+        y_align: Clutter.ActorAlign.CENTER,
+    }));
 }
 
 function createInfoItem(label) {

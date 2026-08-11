@@ -8,7 +8,8 @@ Initial MVP implemented for GNOME Shell 50:
 
 - Authentication reused from GitLab CLI (`glab`).
 - Selection of up to ten projects.
-- Recent activity, open merge requests, and latest pipeline.
+- Selected projects, their default branches, latest commits, pipelines, and open merge requests.
+- Optional display of the latest commit, pipeline, and open merge requests.
 - Manual refresh and configurable polling.
 - Optional notifications for pipelines, new merge requests, and pushes to the default branch.
 - Links to open projects and latest commits in GitLab.
@@ -45,6 +46,7 @@ gnome-extensions pack \
   --extra-source=state-store.js \
   --extra-source=branch-symbolic.svg \
   --extra-source=git-symbolic.svg \
+  --extra-source=external-link-symbolic.svg \
   --extra-source=LICENSE \
   --schema=schemas/org.gnome.shell.extensions.gitlab-monitor.gschema.xml \
   --podir=po \
@@ -86,7 +88,7 @@ git push origin v0.1.0
 2. Verify the hostname and `glab` session.
 3. Select one or more projects.
 4. Open the indicator menu.
-5. Check each project's branch and latest commit.
+5. Check each project's branch, latest commit, pipeline, and merge requests.
 6. Use the refresh action.
 7. Open an item and confirm that it leads to GitLab.
 8. Disable and re-enable the extension.
@@ -110,8 +112,8 @@ glab api --method GET <allowed endpoint>
 The allowlist includes the default branch's latest commit query through
 `GET /projects/:id/repository/commits`.
 
-It does not perform actions on merge requests, pipelines, or projects. Project
-and commit items only provide links to GitLab.
+It does not perform actions on merge requests, pipelines, or projects. Project,
+commit, pipeline, and merge request items only provide links to GitLab.
 
 The preferences can copy the `glab` login command to the clipboard, but only
 after the user activates the copy button.

@@ -72,6 +72,14 @@ msgstr ""
 msgid "No commits on the default branch"
 msgstr ""
 
+#, javascript-format
+msgid "Pipeline #%s · %s · %s"
+msgstr ""
+
+#, javascript-format
+msgid "MR !%s · %s"
+msgstr ""
+
 msgid "not defined"
 msgstr ""
 
@@ -143,6 +151,27 @@ msgid "Refresh interval"
 msgstr ""
 
 msgid "Seconds between automatic requests."
+msgstr ""
+
+msgid "Display"
+msgstr ""
+
+msgid "Show latest commit"
+msgstr ""
+
+msgid "Show the latest commit for each project."
+msgstr ""
+
+msgid "Show pipelines"
+msgstr ""
+
+msgid "Show the latest pipeline for each project."
+msgstr ""
+
+msgid "Show merge requests"
+msgstr ""
+
+msgid "Show open merge requests for each project."
 msgstr ""
 
 msgid "Pipeline notifications"

@@ -79,6 +79,14 @@ msgstr "Sin título"
 msgid "No commits on the default branch"
 msgstr "No hay commits en la rama predeterminada"
 
+#, javascript-format
+msgid "Pipeline #%s · %s · %s"
+msgstr "Pipeline #%s · %s · %s"
+
+#, javascript-format
+msgid "MR !%s · %s"
+msgstr "MR !%s · %s"
+
 msgid "not defined"
 msgstr "sin definir"
 
@@ -150,6 +158,27 @@ msgstr "Intervalo de actualización"
 
 msgid "Seconds between automatic requests."
 msgstr "Segundos entre consultas automáticas."
+
+msgid "Display"
+msgstr "Visualización"
+
+msgid "Show latest commit"
+msgstr "Mostrar último commit"
+
+msgid "Show the latest commit for each project."
+msgstr "Mostrar el último commit de cada proyecto."
+
+msgid "Show pipelines"
+msgstr "Mostrar pipelines"
+
+msgid "Show the latest pipeline for each project."
+msgstr "Mostrar el último pipeline de cada proyecto."
+
+msgid "Show merge requests"
+msgstr "Mostrar merge requests"
+
+msgid "Show open merge requests for each project."
+msgstr "Mostrar los merge requests abiertos de cada proyecto."
 
 msgid "Pipeline notifications"
 msgstr "Notificaciones de pipelines"

@@ -20,6 +20,21 @@
       <summary>Refresh interval</summary>
       <description>Seconds between automatic read-only refreshes.</description>
     </key>
+    <key name="show-latest-commit" type="b">
+      <default>true</default>
+      <summary>Show latest commit</summary>
+      <description>Show the latest commit for each project.</description>
+    </key>
+    <key name="show-pipelines" type="b">
+      <default>true</default>
+      <summary>Show pipelines</summary>
+      <description>Show the latest pipeline for each project.</description>
+    </key>
+    <key name="show-merge-requests" type="b">
+      <default>true</default>
+      <summary>Show merge requests</summary>
+      <description>Show open merge requests for each project.</description>
+    </key>
     <key name="notifications-enabled" type="b">
       <default>true</default>
       <summary>Pipeline notifications</summary>

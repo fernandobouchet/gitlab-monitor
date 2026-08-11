@@ -28,10 +28,12 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
         this._client = new GlabClient({translate: _});
         this._projectRows = [];
         this._refreshing = false;
+        this._cancellable = null;
 
         this._buildConnectionGroup();
         this._buildProjectGroup();
         this._buildBehaviorGroup();
+        this._buildDisplayGroup();
         this._refreshConnection();
     }
 
@@ -161,6 +163,49 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
         group.add(defaultBranchNotificationsRow);
     }
 
+    _buildDisplayGroup() {
+        const group = new Adw.PreferencesGroup({
+            title: _('Display'),
+        });
+        this.add(group);
+
+        const commitRow = new Adw.SwitchRow({
+            title: _('Show latest commit'),
+            subtitle: _('Show the latest commit for each project.'),
+        });
+        this._settings.bind(
+            'show-latest-commit',
+            commitRow,
+            'active',
+            Gio.SettingsBindFlags.DEFAULT
+        );
+        group.add(commitRow);
+
+        const pipelinesRow = new Adw.SwitchRow({
+            title: _('Show pipelines'),
+            subtitle: _('Show the latest pipeline for each project.'),
+        });
+        this._settings.bind(
+            'show-pipelines',
+            pipelinesRow,
+            'active',
+            Gio.SettingsBindFlags.DEFAULT
+        );
+        group.add(pipelinesRow);
+
+        const mergeRequestsRow = new Adw.SwitchRow({
+            title: _('Show merge requests'),
+            subtitle: _('Show open merge requests for each project.'),
+        });
+        this._settings.bind(
+            'show-merge-requests',
+            mergeRequestsRow,
+            'active',
+            Gio.SettingsBindFlags.DEFAULT
+        );
+        group.add(mergeRequestsRow);
+    }
+
     async _refreshConnection() {
         if (this._refreshing)
             return;
@@ -168,6 +213,8 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
         this._refreshing = true;
         this._verifyButton.sensitive = false;
         this._connectionStatus.subtitle = _('Checking…');
+        const cancellable = new Gio.Cancellable();
+        this._cancellable = cancellable;
 
         try {
             if (!this._client.installed) {
@@ -179,7 +226,7 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
 
             const hostname = normalizeHostname(this._hostnameRow.text, _);
             const authenticated =
-                await this._client.checkAuthentication(hostname);
+                await this._client.checkAuthentication(hostname, cancellable);
             if (!authenticated) {
                 this._connectionStatus.subtitle =
                     _('No authenticated session for %s.').format(hostname);
@@ -190,9 +237,9 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
             }
 
             const [version, user, projects] = await Promise.all([
-                this._client.getVersion(),
-                this._client.getCurrentUser(hostname),
-                this._client.listProjects(hostname),
+                this._client.getVersion(cancellable),
+                this._client.getCurrentUser(hostname, cancellable),
+                this._client.listProjects(hostname, cancellable),
             ]);
             this._connectionStatus.subtitle =
                 `${user.name || user.username} · ${version}`;
@@ -201,9 +248,15 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
             this._connectionStatus.subtitle = error.message;
             this._showProjectMessage(_('Could not load projects.'));
         } finally {
+            if (this._cancellable === cancellable)
+                this._cancellable = null;
             this._verifyButton.sensitive = true;
             this._refreshing = false;
         }
+    }
+
+    cancel() {
+        this._cancellable?.cancel();
     }
 
     _renderProjects(projects) {
@@ -298,6 +351,11 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
 export default class GitLabMonitorPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
         window.search_enabled = true;
-        window.add(new GitLabMonitorPreferencesPage(this.getSettings()));
+        const page = new GitLabMonitorPreferencesPage(this.getSettings());
+        window.connect('close-request', () => {
+            page.cancel();
+            return false;
+        });
+        window.add(page);
     }
 }
