@@ -58,6 +58,7 @@ class GitLabIndicator extends PanelMenu.Button {
             y_align: Clutter.ActorAlign.CENTER,
             child: new St.Icon({icon_name: 'view-refresh-symbolic'}),
         });
+        this._refreshButton.cursor_type = Clutter.CursorType.POINTER;
         this._refreshButton.connect('clicked', onRefresh);
         header.add_child(this._refreshButton);
         const preferencesButton = new St.Button({
@@ -66,6 +67,7 @@ class GitLabIndicator extends PanelMenu.Button {
             y_align: Clutter.ActorAlign.CENTER,
             child: new St.Icon({icon_name: 'preferences-system-symbolic'}),
         });
+        preferencesButton.cursor_type = Clutter.CursorType.POINTER;
         preferencesButton.connect('clicked', () => extension.openPreferences());
         header.add_child(preferencesButton);
         this.menu.addMenuItem(header);
@@ -284,11 +286,19 @@ function createProjectItem(project, branchIcon, externalLinkIcon) {
 function addExternalLinkIndicator(item, externalLinkIcon) {
     item.cursor_type = Clutter.CursorType.POINTER;
     item.add_child(new St.Widget({x_expand: true}));
-    item.add_child(new St.Icon({
+    const icon = new St.Icon({
         gicon: externalLinkIcon,
         style_class: 'gitlab-monitor-external-link',
         y_align: Clutter.ActorAlign.CENTER,
-    }));
+    });
+    icon.opacity = 0;
+    item.connect('enter-event', () => {
+        icon.opacity = 166;
+    });
+    item.connect('leave-event', () => {
+        icon.opacity = 0;
+    });
+    item.add_child(icon);
 }
 
 function createInfoItem(label) {
