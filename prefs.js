@@ -340,8 +340,7 @@ class GitLabMonitorPreferencesPage extends Adw.PreferencesPage {
             hostname = 'gitlab.com';
         }
 
-        const command =
-            `glab auth login --hostname ${hostname} --web --use-keyring`;
+        const command = `glab auth login --hostname ${hostname} --web`;
         Gdk.Display.get_default().get_clipboard().set(command);
         this._connectionStatus.subtitle =
             _('Authentication command copied.');
